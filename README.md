@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fridge Tracker
 
-## Getting Started
+A simple, mobile-first app for tracking what's in your fridge, freezer, and pantry. Built for 2 people sharing a bookmarked URL — no login required.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Add items** with name, quantity, zone (Fridge/Freezer/Pantry), and optional expiry date
+- **Auto-suggest expiry dates** for perishable items (e.g. milk → 10 days, chicken → 2 days)
+- **Editable shelf life table** — customize default expiry days for any item via the settings gear
+- **Expiry highlighting** — amber for expiring within 3 days, red for expired
+- **Running low** — tap "Low" to share an item to your Reminders app (uses native share sheet)
+- **Single-tap delete** — tap "Used" to remove an item instantly
+
+## Tech Stack
+
+- Next.js 14 (App Router)
+- shadcn/ui (Radix + Tailwind)
+- Supabase (Postgres database)
+
+## Setup
+
+### 1. Create a Supabase Project
+
+1. Go to [supabase.com](https://supabase.com) and create a new project
+2. Open the **SQL Editor** in your Supabase dashboard
+3. Copy the contents of `supabase/schema.sql` and run it — this creates the `items` and `shelf_life` tables with seed data
+4. Go to **Settings → Data API** (or click **Connect** at the top) and copy your **Project URL** and **Publishable (anon) key**
+
+### 2. Configure Environment Variables
+
+Create a `.env.local` file in the project root:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-publishable-key-here
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Run Locally
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000).
 
-## Learn More
+## Deploy to Vercel
 
-To learn more about Next.js, take a look at the following resources:
+### 1. Push to GitHub
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+gh repo create foodtracker --public --push
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 2. Deploy on Vercel
 
-## Deploy on Vercel
+1. Go to [vercel.com](https://vercel.com) and click **Add New → Project**
+2. Import your GitHub repository
+3. In the **Environment Variables** section, add:
+   - `NEXT_PUBLIC_SUPABASE_URL` → your Supabase project URL
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` → your Supabase publishable key
+4. Click **Deploy**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 3. Share the URL
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Bookmark the Vercel URL on both phones. No login needed — both users share the same database.
+
+## Customizing Shelf Life Defaults
+
+Tap the gear icon in the header to open the shelf life settings. You can:
+
+- **Edit** the number of days for any item (e.g. change milk from 10 to 14 days)
+- **Add** new keywords with a default shelf life
+- **Delete** entries you don't need
+
+Changes are saved to the database immediately and shared between users.
