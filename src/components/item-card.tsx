@@ -14,7 +14,7 @@ export function ItemCard({ item, onDelete, onEdit }: ItemCardProps) {
   const status = getExpiryStatus(item.expiry_date);
 
   const handleRunningLow = async () => {
-    const text = `Buy ${item.name}`;
+    const text = item.name;
     if (navigator.share) {
       try {
         await navigator.share({ text });

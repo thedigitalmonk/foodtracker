@@ -6,6 +6,7 @@ import { Item } from "@/lib/types";
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -144,9 +145,9 @@ export function AddItemDialog({
             {/* Drag handle */}
             <div className="w-9 h-1 bg-[#d1d5db] rounded-full mx-auto -mt-1 mb-1" />
 
-            <h2 className="text-[18px] font-semibold text-[#0a0a0a]">
+            <DialogTitle className="text-[18px] font-semibold text-[#0a0a0a] tracking-normal">
               {isEditing ? "Edit Item" : "Add Item"}
-            </h2>
+            </DialogTitle>
 
             {/* Name */}
             <div className="flex flex-col gap-1.5">
