@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Settings } from "lucide-react";
 import { ShelfLife } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -62,7 +63,7 @@ export function ShelfLifeDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
-          ⚙️
+          <Settings size={18} className="text-[#18181B]" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
