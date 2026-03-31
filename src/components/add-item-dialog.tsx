@@ -1,24 +1,18 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Plus } from "lucide-react";
 import { Item } from "@/lib/types";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+
+const ZONES = ["Fridge", "Freezer", "Pantry"] as const;
 
 interface AddItemDialogProps {
   onAdd: (item: Omit<Item, "id" | "created_at">) => Promise<boolean>;
@@ -43,7 +37,7 @@ export function AddItemDialog({ onAdd, suggestExpiry }: AddItemDialogProps) {
 
   useEffect(() => {
     if (open) {
-      setTimeout(() => nameRef.current?.focus(), 100);
+      setTimeout(() => nameRef.current?.focus(), 150);
     }
   }, [open]);
 
@@ -100,81 +94,94 @@ export function AddItemDialog({ onAdd, suggestExpiry }: AddItemDialogProps) {
       }}
     >
       <DialogTrigger asChild>
-        <Button
-          size="lg"
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full text-2xl shadow-lg z-50"
-        >
-          +
-        </Button>
+        <button className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-[#18181B] text-white flex items-center justify-center shadow-lg z-50">
+          <Plus size={24} />
+        </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Add Item</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div>
-            <Label htmlFor="name">Name</Label>
+
+      <DialogContent className="fixed inset-x-0 bottom-0 top-auto left-0 right-0 translate-x-0 translate-y-0 rounded-t-[20px] rounded-b-none max-w-none w-full border-0 p-0 gap-0 sm:max-w-none">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5 px-6 pt-6 pb-10">
+          {/* Drag handle */}
+          <div className="w-9 h-1 bg-[#d1d5db] rounded-full mx-auto -mt-1 mb-1" />
+
+          <h2 className="text-[18px] font-semibold text-[#0a0a0a]">Add Item</h2>
+
+          {/* Name */}
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-[14px] font-medium text-[#0a0a0a]">Name</Label>
             <Input
               ref={nameRef}
-              id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Milk"
               required
-              className="text-base mt-1"
+              className="text-[16px] rounded-lg border-[#e5e5e5] bg-white h-11 px-3"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="quantity">Quantity</Label>
-              <Input
-                id="quantity"
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
-                placeholder="1"
-                className="text-base mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="zone">Zone</Label>
-              <Select
-                value={zone}
-                onValueChange={(v) =>
-                  setZone(v as "Fridge" | "Freezer" | "Pantry")
-                }
-              >
-                <SelectTrigger className="mt-1">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Fridge">🧊 Fridge</SelectItem>
-                  <SelectItem value="Freezer">❄️ Freezer</SelectItem>
-                  <SelectItem value="Pantry">🗄️ Pantry</SelectItem>
-                </SelectContent>
-              </Select>
+
+          {/* Quantity */}
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-[14px] font-medium text-[#0a0a0a]">Quantity</Label>
+            <Input
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              placeholder="1"
+              className="text-[16px] rounded-lg border-[#e5e5e5] bg-white h-11 px-3"
+            />
+          </div>
+
+          {/* Zone — segmented control */}
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-[14px] font-medium text-[#0a0a0a]">Zone</Label>
+            <div className="flex bg-[#f5f5f5] rounded-xl p-1 gap-1">
+              {ZONES.map((z) => (
+                <button
+                  key={z}
+                  type="button"
+                  onClick={() => setZone(z)}
+                  className={cn(
+                    "flex-1 h-9 rounded-lg text-[13px] font-medium transition-all",
+                    zone === z
+                      ? "bg-white text-[#18181B] shadow-sm"
+                      : "text-[#737373]"
+                  )}
+                >
+                  {z}
+                </button>
+              ))}
             </div>
           </div>
-          <div>
-            <Label htmlFor="expiry">Expiry Date</Label>
+
+          {/* Expiry date */}
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-[14px] font-medium text-[#0a0a0a]">
+              Expiry Date <span className="text-[#a3a3a3] font-normal">(optional)</span>
+            </Label>
             <Input
-              id="expiry"
               type="date"
               value={expiryDate}
               onChange={(e) => {
                 setExpiryDate(e.target.value);
                 setManualExpiry(true);
               }}
-              className="text-base mt-1"
+              className="text-[16px] rounded-lg border-[#e5e5e5] bg-white h-11 px-3"
             />
             {suggestion && !manualExpiry && (
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-[12px] text-[#737373]">
                 Suggested: {suggestion.days} days ({suggestion.keyword})
               </p>
             )}
           </div>
-          <Button type="submit" disabled={submitting || !name.trim()}>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={submitting || !name.trim()}
+            className="flex items-center justify-center gap-2 w-full h-[50px] bg-[#171717] text-white rounded-lg text-[14px] font-medium disabled:opacity-50 mt-1"
+          >
+            <Plus size={18} />
             {submitting ? "Adding..." : "Add Item"}
-          </Button>
+          </button>
         </form>
       </DialogContent>
     </Dialog>

@@ -17,9 +17,10 @@ export default function Home() {
   } = useShelfLife();
 
   return (
-    <main className="max-w-lg mx-auto px-4 pb-24">
-      <header className="flex items-center justify-between py-4 sticky top-0 bg-background z-20">
-        <h1 className="text-xl font-bold">Fridge Tracker</h1>
+    <main className="max-w-[375px] mx-auto min-h-screen bg-[#f5f5f5] flex flex-col">
+      {/* Header */}
+      <header className="flex items-center justify-between px-5 h-14 bg-white border-b border-[#e5e5e5] sticky top-0 z-20">
+        <h1 className="text-[20px] font-semibold text-[#18181B]">Fridge Tracker</h1>
         <ShelfLifeDialog
           entries={shelfLifeEntries}
           onUpdateDays={updateDays}
@@ -28,13 +29,16 @@ export default function Home() {
         />
       </header>
 
-      {loading ? (
-        <div className="flex items-center justify-center py-20 text-muted-foreground">
-          Loading...
-        </div>
-      ) : (
-        <ItemList items={items} onDelete={deleteItem} />
-      )}
+      {/* Content */}
+      <div className="flex-1 px-4 py-4 pb-24">
+        {loading ? (
+          <div className="flex items-center justify-center py-20 text-[#a3a3a3] text-[14px]">
+            Loading...
+          </div>
+        ) : (
+          <ItemList items={items} onDelete={deleteItem} />
+        )}
+      </div>
 
       <AddItemDialog onAdd={addItem} suggestExpiry={suggestExpiryDate} />
     </main>

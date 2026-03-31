@@ -2,7 +2,7 @@
 
 import { Item } from "@/lib/types";
 import { getExpiryStatus, formatDate, cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { TrendingDown, Check } from "lucide-react";
 
 interface ItemCardProps {
   item: Item;
@@ -29,52 +29,53 @@ export function ItemCard({ item, onDelete }: ItemCardProps) {
   return (
     <div
       className={cn(
-        "flex items-center justify-between rounded-lg border p-4 min-h-[56px] transition-colors",
-        status === "expired" && "border-red-400 bg-red-50",
-        status === "expiring-soon" && "border-amber-400 bg-amber-50",
-        status === "ok" && "border-gray-200 bg-white",
-        status === "no-date" && "border-gray-200 bg-white"
+        "flex items-center justify-between p-4 min-h-[68px] gap-3",
+        "border-l-4",
+        status === "expired" && "bg-[#FFF1F2] border-l-[#EF4444]",
+        status === "expiring-soon" && "bg-[#FFFBEB] border-l-[#F59E0B]",
+        (status === "ok" || status === "no-date") && "bg-white border-l-transparent"
       )}
     >
-      <div className="flex-1 min-w-0 mr-3">
-        <div className="flex items-baseline gap-2">
-          <span className="font-medium text-base truncate">{item.name}</span>
-          <span className="text-sm text-muted-foreground shrink-0">
+      <div className="flex-1 min-w-0 flex flex-col gap-[3px]">
+        <div className="flex items-baseline gap-[6px]">
+          <span className="font-semibold text-[15px] text-[#18181B] truncate leading-snug">
+            {item.name}
+          </span>
+          <span className="text-[13px] text-[#a3a3a3] shrink-0">
             x{item.quantity}
           </span>
         </div>
         {item.expiry_date && (
-          <div
+          <span
             className={cn(
-              "text-sm mt-0.5",
-              status === "expired" && "text-red-600 font-medium",
-              status === "expiring-soon" && "text-amber-600 font-medium",
-              status === "ok" && "text-muted-foreground"
+              "text-[12px] leading-snug",
+              status === "expired" && "text-[#EF4444]",
+              status === "expiring-soon" && "text-[#B45309]",
+              (status === "ok" || status === "no-date") && "text-[#a3a3a3]"
             )}
           >
             {status === "expired"
               ? `Expired ${formatDate(item.expiry_date)}`
               : `Expires ${formatDate(item.expiry_date)}`}
-          </div>
+          </span>
         )}
       </div>
-      <div className="flex gap-2 shrink-0">
-        <Button
-          variant="outline"
-          size="sm"
-          className="text-xs h-9 px-3"
+
+      <div className="flex items-center gap-[6px] shrink-0">
+        <button
           onClick={handleRunningLow}
+          className="flex items-center gap-1 h-[29px] px-3 text-[12px] font-semibold text-[#B45309] bg-[#FEF3C7] border border-[#D97706] rounded-[6px] shadow-sm whitespace-nowrap"
         >
+          <TrendingDown size={13} />
           Low
-        </Button>
-        <Button
-          variant="destructive"
-          size="sm"
-          className="text-xs h-9 px-3"
+        </button>
+        <button
           onClick={() => onDelete(item.id)}
+          className="flex items-center gap-1 h-[29px] px-3 text-[12px] font-semibold text-white bg-[#e7000b] rounded-[6px] shadow-sm whitespace-nowrap"
         >
+          <Check size={13} />
           Used
-        </Button>
+        </button>
       </div>
     </div>
   );
