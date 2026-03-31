@@ -207,7 +207,7 @@ export function AddItemDialog({
                   setExpiryDate(e.target.value);
                   setManualExpiry(true);
                 }}
-                className="text-[16px] rounded-lg border-[#e5e5e5] bg-white h-11 px-3 [&::-webkit-calendar-picker-indicator]:hidden"
+                className="text-[16px] rounded-lg border-[#e5e5e5] bg-white h-11 px-3 appearance-none [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:hidden"
               />
               {suggestion && !manualExpiry && (
                 <p className="text-[12px] text-[#737373]">
