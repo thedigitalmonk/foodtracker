@@ -7,9 +7,10 @@ import { TrendingDown, Check } from "lucide-react";
 interface ItemCardProps {
   item: Item;
   onDelete: (id: string) => void;
+  onEdit: (item: Item) => void;
 }
 
-export function ItemCard({ item, onDelete }: ItemCardProps) {
+export function ItemCard({ item, onDelete, onEdit }: ItemCardProps) {
   const status = getExpiryStatus(item.expiry_date);
 
   const handleRunningLow = async () => {
@@ -36,7 +37,11 @@ export function ItemCard({ item, onDelete }: ItemCardProps) {
         (status === "ok" || status === "no-date") && "bg-white border-l-transparent"
       )}
     >
-      <div className="flex-1 min-w-0 flex flex-col gap-[3px]">
+      <button
+        type="button"
+        onClick={() => onEdit(item)}
+        className="flex-1 min-w-0 flex flex-col gap-[3px] text-left"
+      >
         <div className="flex items-baseline gap-[6px]">
           <span className="font-semibold text-[15px] text-[#18181B] truncate leading-snug">
             {item.name}
@@ -59,7 +64,7 @@ export function ItemCard({ item, onDelete }: ItemCardProps) {
               : `Expires ${formatDate(item.expiry_date)}`}
           </span>
         )}
-      </div>
+      </button>
 
       <div className="flex items-center gap-[6px] shrink-0">
         <button

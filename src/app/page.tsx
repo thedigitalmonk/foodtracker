@@ -1,13 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { useItems } from "@/hooks/use-items";
 import { useShelfLife } from "@/hooks/use-shelf-life";
 import { ItemList } from "@/components/item-list";
 import { AddItemDialog } from "@/components/add-item-dialog";
 import { ShelfLifeDialog } from "@/components/shelf-life-dialog";
+import { Item } from "@/lib/types";
 
 export default function Home() {
-  const { items, loading, addItem, deleteItem } = useItems();
+  const { items, loading, addItem, deleteItem, updateItem } = useItems();
   const {
     entries: shelfLifeEntries,
     suggestExpiryDate,
@@ -15,6 +17,7 @@ export default function Home() {
     addEntry,
     deleteEntry,
   } = useShelfLife();
+  const [editingItem, setEditingItem] = useState<Item | null>(null);
 
   return (
     <main className="max-w-[375px] mx-auto min-h-screen bg-[#f5f5f5] flex flex-col">
@@ -36,11 +39,17 @@ export default function Home() {
             Loading...
           </div>
         ) : (
-          <ItemList items={items} onDelete={deleteItem} />
+          <ItemList items={items} onDelete={deleteItem} onEdit={setEditingItem} />
         )}
       </div>
 
-      <AddItemDialog onAdd={addItem} suggestExpiry={suggestExpiryDate} />
+      <AddItemDialog
+        onAdd={addItem}
+        onEdit={updateItem}
+        suggestExpiry={suggestExpiryDate}
+        editItem={editingItem}
+        onEditClose={() => setEditingItem(null)}
+      />
     </main>
   );
 }

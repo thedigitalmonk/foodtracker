@@ -49,5 +49,21 @@ export function useItems() {
     }
   };
 
-  return { items, loading, addItem, deleteItem };
+  const updateItem = async (
+    id: string,
+    updates: Omit<Item, "id" | "created_at">
+  ): Promise<boolean> => {
+    const { error } = await getSupabase()
+      .from("items")
+      .update(updates)
+      .eq("id", id);
+    if (error) {
+      console.error("Error updating item:", error);
+      return false;
+    }
+    await fetchItems();
+    return true;
+  };
+
+  return { items, loading, addItem, deleteItem, updateItem };
 }

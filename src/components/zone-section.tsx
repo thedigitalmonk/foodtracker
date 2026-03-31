@@ -14,9 +14,10 @@ interface ZoneSectionProps {
   zone: string;
   items: Item[];
   onDelete: (id: string) => void;
+  onEdit: (item: Item) => void;
 }
 
-export function ZoneSection({ zone, items, onDelete }: ZoneSectionProps) {
+export function ZoneSection({ zone, items, onDelete, onEdit }: ZoneSectionProps) {
   const meta = ZONE_META[zone] ?? { icon: Package, label: zone };
   const Icon = meta.icon;
 
@@ -38,7 +39,7 @@ export function ZoneSection({ zone, items, onDelete }: ZoneSectionProps) {
       {/* Item cards */}
       <div className="divide-y divide-[#e5e5e5]">
         {items.map((item) => (
-          <ItemCard key={item.id} item={item} onDelete={onDelete} />
+          <ItemCard key={item.id} item={item} onDelete={onDelete} onEdit={onEdit} />
         ))}
       </div>
     </div>
