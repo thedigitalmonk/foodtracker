@@ -49,11 +49,15 @@ export function ZoneSection({ zone, items, onDelete, onEdit }: ZoneSectionProps)
 
       {/* Item cards */}
       {expanded && (
-        <div className="divide-y divide-[#e5e5e5]">
-          {items.map((item) => (
-            <ItemCard key={item.id} item={item} onDelete={onDelete} onEdit={onEdit} />
-          ))}
-        </div>
+        items.length === 0 ? (
+          <div className="px-4 py-5 text-[13px] text-[#a3a3a3]">No items</div>
+        ) : (
+          <div className="divide-y divide-[#e5e5e5]">
+            {items.map((item) => (
+              <ItemCard key={item.id} item={item} onDelete={onDelete} onEdit={onEdit} />
+            ))}
+          </div>
+        )
       )}
     </div>
   );
