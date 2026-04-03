@@ -1,12 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useItems } from "@/hooks/use-items";
 import { useShelfLife } from "@/hooks/use-shelf-life";
 import { ItemList } from "@/components/item-list";
 import { AddItemDialog } from "@/components/add-item-dialog";
 import { ShelfLifeDialog } from "@/components/shelf-life-dialog";
+import { Toast } from "@/components/toast";
 import { Item } from "@/lib/types";
+
+const UNDO_DURATION = 5000;
+
+interface PendingDelete {
+  id: string;
+  name: string;
+  timer: ReturnType<typeof setTimeout>;
+}
 
 export default function Home() {
   const { items, loading, addItem, deleteItem, updateItem } = useItems();
@@ -18,6 +27,50 @@ export default function Home() {
     deleteEntry,
   } = useShelfLife();
   const [editingItem, setEditingItem] = useState<Item | null>(null);
+
+  const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
+  const pendingRef = useRef<PendingDelete | null>(null);
+  pendingRef.current = pendingDelete;
+
+  const commitDelete = useCallback((id: string) => {
+    deleteItem(id);
+    setPendingDelete(null);
+  }, [deleteItem]);
+
+  const handleUsed = useCallback((id: string) => {
+    // Commit any in-flight delete immediately before starting a new one
+    if (pendingRef.current) {
+      clearTimeout(pendingRef.current.timer);
+      deleteItem(pendingRef.current.id);
+    }
+
+    const item = items.find((i) => i.id === id);
+    const name = item?.name ?? "Item";
+
+    const timer = setTimeout(() => commitDelete(id), UNDO_DURATION);
+    const next = { id, name, timer };
+    setPendingDelete(next);
+    pendingRef.current = next;
+  }, [items, deleteItem, commitDelete]);
+
+  const handleUndo = useCallback(() => {
+    if (pendingRef.current) {
+      clearTimeout(pendingRef.current.timer);
+      setPendingDelete(null);
+    }
+  }, []);
+
+  const handleDismiss = useCallback(() => {
+    if (pendingRef.current) {
+      clearTimeout(pendingRef.current.timer);
+      deleteItem(pendingRef.current.id);
+      setPendingDelete(null);
+    }
+  }, [deleteItem]);
+
+  const displayedItems = pendingDelete
+    ? items.filter((i) => i.id !== pendingDelete.id)
+    : items;
 
   return (
     <main className="max-w-[375px] mx-auto min-h-screen bg-[#f5f5f5] flex flex-col">
@@ -39,7 +92,7 @@ export default function Home() {
             Loading...
           </div>
         ) : (
-          <ItemList items={items} onDelete={deleteItem} onEdit={setEditingItem} />
+          <ItemList items={displayedItems} onDelete={handleUsed} onEdit={setEditingItem} />
         )}
       </div>
 
@@ -50,6 +103,16 @@ export default function Home() {
         editItem={editingItem}
         onEditClose={() => setEditingItem(null)}
       />
+
+      {pendingDelete && (
+        <Toast
+          key={pendingDelete.id}
+          message={`${pendingDelete.name} marked as used`}
+          onUndo={handleUndo}
+          onDismiss={handleDismiss}
+          duration={UNDO_DURATION}
+        />
+      )}
     </main>
   );
 }
