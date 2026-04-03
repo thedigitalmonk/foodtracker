@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Plus, Check } from "lucide-react";
+import { Plus, Check, X } from "lucide-react";
 import { Item } from "@/lib/types";
 import {
   Dialog,
@@ -200,15 +200,30 @@ export function AddItemDialog({
               <Label className="text-[14px] font-medium text-[#0a0a0a]">
                 Expiry Date <span className="text-[#a3a3a3] font-normal">(optional)</span>
               </Label>
-              <Input
-                type="date"
-                value={expiryDate}
-                onChange={(e) => {
-                  setExpiryDate(e.target.value);
-                  setManualExpiry(true);
-                }}
-                className="text-[16px] rounded-lg border-[#e5e5e5] bg-white h-11 px-3 appearance-none [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:hidden"
-              />
+              <div className="relative">
+                <Input
+                  type="date"
+                  value={expiryDate}
+                  onChange={(e) => {
+                    setExpiryDate(e.target.value);
+                    setManualExpiry(true);
+                  }}
+                  className="text-[16px] rounded-lg border-[#e5e5e5] bg-white h-11 px-3 appearance-none [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:hidden"
+                />
+                {expiryDate && (
+                  <button
+                    type="button"
+                    onPointerDown={(e) => {
+                      e.preventDefault();
+                      setExpiryDate("");
+                      setManualExpiry(false);
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a3a3a3] p-1"
+                  >
+                    <X size={15} />
+                  </button>
+                )}
+              </div>
               {suggestion && !manualExpiry && (
                 <p className="text-[12px] text-[#737373]">
                   Suggested: {suggestion.days} days ({suggestion.keyword})
