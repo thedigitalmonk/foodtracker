@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Plus, Check, X } from "lucide-react";
+import { Plus, Check, X, ScanLine } from "lucide-react";
 import { Item } from "@/lib/types";
 import {
   Dialog,
@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { BarcodeScanner } from "@/components/barcode-scanner";
 
 const ZONES = ["Fridge", "Freezer", "Pantry"] as const;
 
@@ -42,6 +43,7 @@ export function AddItemDialog({
   } | null>(null);
   const [manualExpiry, setManualExpiry] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [scannerOpen, setScannerOpen] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
 
   const isEditing = !!editItem;
@@ -131,6 +133,17 @@ export function AddItemDialog({
 
   return (
     <>
+      {/* Barcode scanner overlay */}
+      {scannerOpen && (
+        <BarcodeScanner
+          onResult={(scannedName) => {
+            setName(scannedName);
+            setScannerOpen(false);
+          }}
+          onClose={() => setScannerOpen(false)}
+        />
+      )}
+
       {/* FAB — only for adding new items */}
       <button
         onClick={() => setAddOpen(true)}
@@ -152,14 +165,23 @@ export function AddItemDialog({
             {/* Name */}
             <div className="flex flex-col gap-1.5">
               <Label className="text-[14px] font-medium text-[#0a0a0a]">Name</Label>
-              <Input
-                ref={nameRef}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Milk"
-                required
-                className="text-[16px] rounded-lg border-[#e5e5e5] bg-white h-11 px-3"
-              />
+              <div className="relative">
+                <Input
+                  ref={nameRef}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Milk"
+                  required
+                  className="text-[16px] rounded-lg border-[#e5e5e5] bg-white h-11 px-3 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setScannerOpen(true)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a3a3a3] p-1"
+                >
+                  <ScanLine size={18} />
+                </button>
+              </div>
             </div>
 
             {/* Quantity */}

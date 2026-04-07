@@ -44,6 +44,15 @@ const config: Config = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      animation: {
+        scan: "scan 1.5s ease-in-out infinite",
+      },
+      keyframes: {
+        scan: {
+          "0%, 100%": { top: "0%" },
+          "50%": { top: "100%" },
+        },
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
