@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Plus, Check, X, ScanLine } from "lucide-react";
+import { Plus, Check, X, ScanLine, Camera, Loader2 } from "lucide-react";
 import { Item } from "@/lib/types";
 import {
   Dialog,
@@ -12,6 +12,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { BarcodeScanner } from "@/components/barcode-scanner";
+import {
+  compressImage,
+  expiryDateFromDays,
+  formatRecognizedQuantity,
+  HeicUnsupportedError,
+  type FoodRecognitionResult,
+} from "@/lib/food-recognition";
 
 const ZONES = ["Fridge", "Freezer", "Pantry"] as const;
 
@@ -44,7 +51,11 @@ export function AddItemDialog({
   const [manualExpiry, setManualExpiry] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [scannerOpen, setScannerOpen] = useState(false);
+  const [recognizing, setRecognizing] = useState(false);
+  const [recognitionMsg, setRecognitionMsg] = useState<string | null>(null);
+  const [lowConfidence, setLowConfidence] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const isEditing = !!editItem;
   const open = isEditing || addOpen;
@@ -93,6 +104,8 @@ export function AddItemDialog({
     setSuggestion(null);
     setManualExpiry(false);
     setSubmitting(false);
+    setRecognitionMsg(null);
+    setLowConfidence(false);
   };
 
   const handleClose = () => {
@@ -131,6 +144,62 @@ export function AddItemDialog({
     setSubmitting(false);
   };
 
+  const handleImageCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = ""; // allow re-selecting same file
+
+    setRecognitionMsg(null);
+    setLowConfidence(false);
+    setRecognizing(true);
+
+    try {
+      const compressed = await compressImage(file);
+      const res = await fetch("/api/recognize-food", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: compressed }),
+      });
+      const data: FoodRecognitionResult & { error?: string } = await res.json();
+
+      if (data.error === "not_recognized") {
+        setRecognitionMsg("Couldn't identify this — please enter manually.");
+      } else if (data.error) {
+        setRecognitionMsg("Recognition failed — please try again.");
+      } else {
+        setName(data.name);
+        setQuantity(formatRecognizedQuantity(data.quantity, data.unit));
+        // Fresh produce defaults to Fridge; derive new zone before using it for shelf life
+        const newZone =
+          data.category === "fruit" || data.category === "vegetable"
+            ? "Fridge" as const
+            : zone;
+        setZone(newZone);
+        // Use refrigerated shelf life for Fridge/Freezer, room temp for Pantry
+        const shelfDays =
+          newZone === "Pantry"
+            ? data.estimated_shelf_life_days
+            : data.refrigerated_shelf_life_days;
+        if (shelfDays > 0) {
+          setExpiryDate(expiryDateFromDays(shelfDays));
+          setManualExpiry(true);
+          setSuggestion(null);
+        }
+        if (data.confidence === "low") {
+          setLowConfidence(true);
+        }
+      }
+    } catch (err) {
+      if (err instanceof HeicUnsupportedError) {
+        setRecognitionMsg("HEIC images aren't supported here — try taking a new photo with the camera button instead.");
+      } else {
+        setRecognitionMsg("Recognition failed — please try again.");
+      }
+    } finally {
+      setRecognizing(false);
+    }
+  };
+
   return (
     <>
       {/* Barcode scanner overlay */}
@@ -155,6 +224,18 @@ export function AddItemDialog({
       <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
         <DialogContent className="fixed inset-x-0 bottom-0 top-auto left-0 right-0 translate-x-0 translate-y-0 rounded-t-[20px] rounded-b-none max-w-none w-full border-0 p-0 gap-0 sm:max-w-none">
           <form onSubmit={handleSubmit} className="flex flex-col gap-5 px-6 pt-6 pb-10">
+            {/* Hidden file input for camera/image recognition */}
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="sr-only"
+              tabIndex={-1}
+              aria-hidden
+              onChange={handleImageCapture}
+            />
+
             {/* Drag handle */}
             <div className="w-9 h-1 bg-[#d1d5db] rounded-full mx-auto -mt-1 mb-1" />
 
@@ -169,19 +250,46 @@ export function AddItemDialog({
                 <Input
                   ref={nameRef}
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setRecognitionMsg(null);
+                    setLowConfidence(false);
+                  }}
                   placeholder="e.g. Milk"
                   required
-                  className="text-[16px] rounded-lg border-[#e5e5e5] bg-white h-11 px-3 pr-10"
+                  className="text-[16px] rounded-lg border-[#e5e5e5] bg-white h-11 px-3 pr-[4.5rem]"
                 />
-                <button
-                  type="button"
-                  onClick={() => setScannerOpen(true)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a3a3a3] p-1"
-                >
-                  <ScanLine size={18} />
-                </button>
+                <div className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center">
+                  <button
+                    type="button"
+                    onClick={() => cameraInputRef.current?.click()}
+                    disabled={recognizing}
+                    className="text-[#a3a3a3] p-1.5"
+                    aria-label="Identify with camera"
+                  >
+                    {recognizing
+                      ? <Loader2 size={17} className="animate-spin" />
+                      : <Camera size={17} />
+                    }
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setScannerOpen(true)}
+                    className="text-[#a3a3a3] p-1.5"
+                    aria-label="Scan barcode"
+                  >
+                    <ScanLine size={17} />
+                  </button>
+                </div>
               </div>
+              {lowConfidence && (
+                <p className="text-[12px] text-amber-600">
+                  Low confidence — please verify the details before saving.
+                </p>
+              )}
+              {recognitionMsg && (
+                <p className="text-[12px] text-[#737373]">{recognitionMsg}</p>
+              )}
             </div>
 
             {/* Quantity */}
