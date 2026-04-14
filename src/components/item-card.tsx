@@ -2,28 +2,31 @@
 
 import { Item } from "@/lib/types";
 import { getExpiryStatus, formatDate, cn } from "@/lib/utils";
-import { TrendingDown, Check } from "lucide-react";
+import { Check } from "lucide-react";
 
 interface ItemCardProps {
   item: Item;
   onDelete: (id: string) => void;
+  onDecrement: (id: string) => void;
   onEdit: (item: Item) => void;
 }
 
-export function ItemCard({ item, onDelete, onEdit }: ItemCardProps) {
+export function ItemCard({ item, onDelete, onDecrement, onEdit }: ItemCardProps) {
   const status = getExpiryStatus(item.expiry_date);
 
-  const handleRunningLow = async () => {
-    const text = item.name;
-    if (navigator.share) {
-      try {
-        await navigator.share({ text });
-      } catch {
-        // User cancelled share
-      }
+  const handleUsed = async () => {
+    const qty = parseInt(item.quantity, 10);
+    if (!isNaN(qty) && qty > 1) {
+      onDecrement(item.id);
     } else {
-      await navigator.clipboard.writeText(text);
-      alert("Copied to clipboard: " + text);
+      if (navigator.share) {
+        try {
+          await navigator.share({ text: item.name });
+        } catch {
+          // User cancelled share
+        }
+      }
+      onDelete(item.id);
     }
   };
 
@@ -68,14 +71,7 @@ export function ItemCard({ item, onDelete, onEdit }: ItemCardProps) {
 
       <div className="flex items-center gap-[6px] shrink-0">
         <button
-          onClick={handleRunningLow}
-          className="flex items-center gap-1 h-[29px] px-3 text-[12px] font-semibold text-[#B45309] bg-[#FEF3C7] border border-[#D97706] rounded-[6px] shadow-sm whitespace-nowrap"
-        >
-          <TrendingDown size={13} />
-          Low
-        </button>
-        <button
-          onClick={() => onDelete(item.id)}
+          onClick={handleUsed}
           className="flex items-center gap-1 h-[29px] px-3 text-[12px] font-semibold text-white bg-[#e7000b] rounded-[6px] shadow-sm whitespace-nowrap"
         >
           <Check size={13} />

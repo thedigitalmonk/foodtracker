@@ -32,6 +32,7 @@ interface ZoneSectionProps {
   zone: string;
   items: Item[];
   onDelete: (id: string) => void;
+  onDecrement: (id: string) => void;
   onEdit: (item: Item) => void;
 }
 
@@ -50,7 +51,7 @@ function saveOrder(zone: string, ids: string[]) {
   } catch {}
 }
 
-export function ZoneSection({ zone, items, onDelete, onEdit }: ZoneSectionProps) {
+export function ZoneSection({ zone, items, onDelete, onDecrement, onEdit }: ZoneSectionProps) {
   const [expanded, setExpanded] = useState(true);
   const [orderedIds, setOrderedIds] = useState<string[]>(() => {
     const stored = loadOrder(zone);
@@ -143,6 +144,7 @@ export function ZoneSection({ zone, items, onDelete, onEdit }: ZoneSectionProps)
                     key={item.id}
                     item={item}
                     onDelete={onDelete}
+                    onDecrement={onDecrement}
                     onEdit={onEdit}
                   />
                 ))}
@@ -155,6 +157,7 @@ export function ZoneSection({ zone, items, onDelete, onEdit }: ZoneSectionProps)
                   <ItemCard
                     item={activeItem}
                     onDelete={onDelete}
+                    onDecrement={onDecrement}
                     onEdit={onEdit}
                   />
                 </div>

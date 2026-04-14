@@ -53,6 +53,14 @@ export default function Home() {
     pendingRef.current = next;
   }, [items, deleteItem, commitDelete]);
 
+  const handleDecrement = useCallback((id: string) => {
+    const item = items.find((i) => i.id === id);
+    if (!item) return;
+    const qty = parseInt(item.quantity, 10);
+    if (isNaN(qty)) return;
+    updateItem(id, { name: item.name, quantity: String(qty - 1), zone: item.zone, expiry_date: item.expiry_date });
+  }, [items, updateItem]);
+
   const handleUndo = useCallback(() => {
     if (pendingRef.current) {
       clearTimeout(pendingRef.current.timer);
@@ -92,7 +100,7 @@ export default function Home() {
             Loading...
           </div>
         ) : (
-          <ItemList items={displayedItems} onDelete={handleUsed} onEdit={setEditingItem} />
+          <ItemList items={displayedItems} onDelete={handleUsed} onDecrement={handleDecrement} onEdit={setEditingItem} />
         )}
       </div>
 

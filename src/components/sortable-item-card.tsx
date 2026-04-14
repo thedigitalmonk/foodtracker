@@ -8,10 +8,11 @@ import { ItemCard } from "./item-card";
 interface SortableItemCardProps {
   item: Item;
   onDelete: (id: string) => void;
+  onDecrement: (id: string) => void;
   onEdit: (item: Item) => void;
 }
 
-export function SortableItemCard({ item, onDelete, onEdit }: SortableItemCardProps) {
+export function SortableItemCard({ item, onDelete, onDecrement, onEdit }: SortableItemCardProps) {
   const {
     attributes,
     listeners,
@@ -32,7 +33,7 @@ export function SortableItemCard({ item, onDelete, onEdit }: SortableItemCardPro
       {...attributes}
       {...listeners}
     >
-      <ItemCard item={item} onDelete={onDelete} onEdit={onEdit} />
+      <ItemCard item={item} onDelete={onDelete} onDecrement={onDecrement} onEdit={onEdit} />
     </div>
   );
 }

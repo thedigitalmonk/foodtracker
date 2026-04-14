@@ -8,10 +8,11 @@ const ZONE_ORDER = ["Fridge", "Freezer", "Pantry"] as const;
 interface ItemListProps {
   items: Item[];
   onDelete: (id: string) => void;
+  onDecrement: (id: string) => void;
   onEdit: (item: Item) => void;
 }
 
-export function ItemList({ items, onDelete, onEdit }: ItemListProps) {
+export function ItemList({ items, onDelete, onDecrement, onEdit }: ItemListProps) {
   const grouped = ZONE_ORDER.map((zone) => ({
     zone,
     items: items.filter((item) => item.zone === zone),
@@ -25,6 +26,7 @@ export function ItemList({ items, onDelete, onEdit }: ItemListProps) {
           zone={zone}
           items={items}
           onDelete={onDelete}
+          onDecrement={onDecrement}
           onEdit={onEdit}
         />
       ))}
