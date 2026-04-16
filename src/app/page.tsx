@@ -143,7 +143,7 @@ export default function Home() {
 
       {/* Content */}
       <div
-        className="flex-1 py-4 pb-24"
+        className="flex-1 pb-24"
         onTouchStart={(e) => {
           touchStartRef.current = {
             x: e.touches[0].clientX,
