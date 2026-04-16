@@ -30,6 +30,7 @@ interface AddItemDialogProps {
   ) => { date: string; days: number; keyword: string } | null;
   editItem?: Item | null;
   onEditClose?: () => void;
+  defaultZone?: "Fridge" | "Freezer" | "Pantry";
 }
 
 export function AddItemDialog({
@@ -38,11 +39,12 @@ export function AddItemDialog({
   suggestExpiry,
   editItem,
   onEditClose,
+  defaultZone,
 }: AddItemDialogProps) {
   const [addOpen, setAddOpen] = useState(false);
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("1");
-  const [zone, setZone] = useState<"Fridge" | "Freezer" | "Pantry">("Fridge");
+  const [zone, setZone] = useState<"Fridge" | "Freezer" | "Pantry">(defaultZone ?? "Fridge");
   const [expiryDate, setExpiryDate] = useState("");
   const [suggestion, setSuggestion] = useState<{
     days: number;
@@ -73,12 +75,13 @@ export function AddItemDialog({
     }
   }, [editItem]);
 
-  // Auto-focus on add open
+  // Auto-focus and zone pre-selection on add open
   useEffect(() => {
     if (addOpen && !isEditing) {
+      setZone(defaultZone ?? "Fridge");
       setTimeout(() => nameRef.current?.focus(), 150);
     }
-  }, [addOpen, isEditing]);
+  }, [addOpen, isEditing, defaultZone]);
 
   // Suggest expiry when typing name (add mode only)
   useEffect(() => {
@@ -99,7 +102,7 @@ export function AddItemDialog({
   const reset = () => {
     setName("");
     setQuantity("1");
-    setZone("Fridge");
+    setZone(defaultZone ?? "Fridge");
     setExpiryDate("");
     setSuggestion(null);
     setManualExpiry(false);

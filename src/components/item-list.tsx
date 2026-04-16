@@ -3,33 +3,24 @@
 import { Item } from "@/lib/types";
 import { ZoneSection } from "./zone-section";
 
-const ZONE_ORDER = ["Fridge", "Freezer", "Pantry"] as const;
-
 interface ItemListProps {
   items: Item[];
+  activeZone: "Fridge" | "Freezer" | "Pantry";
   onDelete: (id: string) => void;
   onDecrement: (id: string) => void;
   onEdit: (item: Item) => void;
 }
 
-export function ItemList({ items, onDelete, onDecrement, onEdit }: ItemListProps) {
-  const grouped = ZONE_ORDER.map((zone) => ({
-    zone,
-    items: items.filter((item) => item.zone === zone),
-  }));
+export function ItemList({ items, activeZone, onDelete, onDecrement, onEdit }: ItemListProps) {
+  const zoneItems = items.filter((item) => item.zone === activeZone);
 
   return (
-    <div className="flex flex-col gap-2">
-      {grouped.map(({ zone, items }) => (
-        <ZoneSection
-          key={zone}
-          zone={zone}
-          items={items}
-          onDelete={onDelete}
-          onDecrement={onDecrement}
-          onEdit={onEdit}
-        />
-      ))}
-    </div>
+    <ZoneSection
+      zone={activeZone}
+      items={zoneItems}
+      onDelete={onDelete}
+      onDecrement={onDecrement}
+      onEdit={onEdit}
+    />
   );
 }
