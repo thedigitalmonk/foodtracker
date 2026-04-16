@@ -95,7 +95,7 @@ export default function Home() {
     : items;
 
   return (
-    <main className="max-w-[375px] mx-auto min-h-screen bg-[#f5f5f5] flex flex-col">
+    <main className="min-h-screen bg-[#f5f5f5] flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between px-5 h-14 bg-white border-b border-[#e5e5e5] sticky top-0 z-20">
         <h1 className="text-[20px] font-semibold text-[#18181B]">Fridge Tracker</h1>
