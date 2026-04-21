@@ -25,7 +25,7 @@ export function Toast({ message, onUndo, onDismiss, duration = 5000 }: ToastProp
 
   return (
     <div className="fixed bottom-24 left-1/2 -translate-x-1/2 w-[calc(100%-32px)] max-w-[343px] z-50">
-      <div className="bg-[#18181B] text-white rounded-xl shadow-lg overflow-hidden">
+      <div className="bg-foreground text-background rounded-xl shadow-lg overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 gap-3">
           <span className="text-[13px] font-medium truncate">{message}</span>
           <div className="flex items-center gap-2 shrink-0">
@@ -37,14 +37,14 @@ export function Toast({ message, onUndo, onDismiss, duration = 5000 }: ToastProp
             </button>
             <button
               onClick={onDismiss}
-              className="text-[13px] text-[#a3a3a3] px-2 py-1"
+              className="text-[13px] text-background/60 px-2 py-1"
             >
               ✕
             </button>
           </div>
         </div>
         {/* Progress bar */}
-        <div className="h-[3px] bg-[#3f3f3f]">
+        <div className="h-[3px] bg-background/20">
           <div
             ref={barRef}
             className="h-full bg-[#FCD34D] w-full"
