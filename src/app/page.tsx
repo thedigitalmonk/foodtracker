@@ -98,7 +98,7 @@ export default function Home() {
     <main className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between px-5 h-14 bg-card border-b border-border sticky top-0 z-20">
-        <h1 className="text-[20px] font-semibold text-foreground">Fridge Tracker</h1>
+        <h1 className="text-[20px] font-semibold text-foreground">ST Store</h1>
         <ShelfLifeDialog
           entries={shelfLifeEntries}
           onUpdateDays={updateDays}
