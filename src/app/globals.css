@@ -26,7 +26,10 @@
     --radius: 0.75rem;
   }
 
-  .dark {
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
     --background: 0 0% 4%;
     --foreground: 0 0% 98%;
     --card: 0 0% 9%;
