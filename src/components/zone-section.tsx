@@ -89,7 +89,7 @@ export function ZoneSection({ zone, items, onDelete, onDecrement, onEdit }: Zone
 
   if (items.length === 0) {
     return (
-      <div className="px-4 py-10 flex items-center justify-center text-[13px] text-[#a3a3a3]">
+      <div className="px-4 py-10 flex items-center justify-center text-[13px] text-muted-foreground">
         No items
       </div>
     );
@@ -106,7 +106,7 @@ export function ZoneSection({ zone, items, onDelete, onDecrement, onEdit }: Zone
         items={sortedItems.map((i) => i.id)}
         strategy={verticalListSortingStrategy}
       >
-        <div className="divide-y divide-[#e5e5e5]">
+        <div className="divide-y divide-border">
           {sortedItems.map((item) => (
             <SortableItemCard
               key={item.id}
