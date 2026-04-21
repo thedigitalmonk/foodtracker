@@ -35,9 +35,9 @@ export function ItemCard({ item, onDelete, onDecrement, onEdit }: ItemCardProps)
       className={cn(
         "flex items-center justify-between p-4 min-h-[68px] gap-3",
         "border-l-4",
-        status === "expired" && "bg-[#FFF1F2] border-l-[#EF4444]",
-        status === "expiring-soon" && "bg-[#FFFBEB] border-l-[#F59E0B]",
-        (status === "ok" || status === "no-date") && "bg-white border-l-transparent"
+        status === "expired" && "bg-destructive/10 border-l-destructive",
+        status === "expiring-soon" && "bg-amber-50 dark:bg-amber-950/30 border-l-amber-500",
+        (status === "ok" || status === "no-date") && "bg-card border-l-transparent"
       )}
     >
       <button
@@ -46,10 +46,10 @@ export function ItemCard({ item, onDelete, onDecrement, onEdit }: ItemCardProps)
         className="flex-1 min-w-0 flex flex-col gap-[3px] text-left"
       >
         <div className="flex items-baseline gap-[6px]">
-          <span className="font-semibold text-[15px] text-[#18181B] truncate leading-snug">
+          <span className="font-semibold text-[15px] text-foreground truncate leading-snug">
             {item.name}
           </span>
-          <span className="text-[13px] text-[#a3a3a3] shrink-0">
+          <span className="text-[13px] text-muted-foreground shrink-0">
             x{item.quantity}
           </span>
         </div>
@@ -57,9 +57,9 @@ export function ItemCard({ item, onDelete, onDecrement, onEdit }: ItemCardProps)
           <span
             className={cn(
               "text-[12px] leading-snug",
-              status === "expired" && "text-[#EF4444]",
-              status === "expiring-soon" && "text-[#B45309]",
-              (status === "ok" || status === "no-date") && "text-[#a3a3a3]"
+              status === "expired" && "text-destructive",
+              status === "expiring-soon" && "text-amber-700 dark:text-amber-400",
+              (status === "ok" || status === "no-date") && "text-muted-foreground"
             )}
           >
             {status === "expired"
@@ -72,7 +72,7 @@ export function ItemCard({ item, onDelete, onDecrement, onEdit }: ItemCardProps)
       <div className="flex items-center gap-[6px] shrink-0">
         <button
           onClick={handleUsed}
-          className="flex items-center gap-1 h-[29px] px-3 text-[12px] font-semibold text-white bg-[#e7000b] rounded-[6px] shadow-sm whitespace-nowrap"
+          className="flex items-center gap-1 h-[29px] px-3 text-[12px] font-semibold text-destructive-foreground bg-destructive rounded-[6px] shadow-sm whitespace-nowrap"
         >
           <Check size={13} />
           Used
