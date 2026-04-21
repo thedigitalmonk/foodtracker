@@ -95,10 +95,10 @@ export default function Home() {
     : items;
 
   return (
-    <main className="min-h-screen bg-[#f5f5f5] flex flex-col">
+    <main className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between px-5 h-14 bg-white border-b border-[#e5e5e5] sticky top-0 z-20">
-        <h1 className="text-[20px] font-semibold text-[#18181B]">Fridge Tracker</h1>
+      <header className="flex items-center justify-between px-5 h-14 bg-card border-b border-border sticky top-0 z-20">
+        <h1 className="text-[20px] font-semibold text-foreground">Fridge Tracker</h1>
         <ShelfLifeDialog
           entries={shelfLifeEntries}
           onUpdateDays={updateDays}
@@ -108,7 +108,7 @@ export default function Home() {
       </header>
 
       {/* Tab bar */}
-      <div className="sticky top-14 z-10 bg-white border-b border-[#e5e5e5] flex">
+      <div className="sticky top-14 z-10 bg-card border-b border-border flex">
         {ZONE_TABS.map(({ zone, Icon }) => {
           const count = displayedItems.filter((i) => i.zone === zone).length;
           const active = activeZone === zone;
@@ -120,8 +120,8 @@ export default function Home() {
                 "flex-1 flex items-center justify-center gap-1.5 py-3",
                 "text-[13px] font-medium border-b-2 transition-colors",
                 active
-                  ? "text-[#18181B] border-[#18181B]"
-                  : "text-[#a3a3a3] border-transparent"
+                  ? "text-foreground border-foreground"
+                  : "text-muted-foreground border-transparent"
               )}
             >
               <Icon size={15} />
@@ -130,7 +130,7 @@ export default function Home() {
                 <span
                   className={cn(
                     "text-[11px] font-semibold min-w-[16px] h-[16px] rounded-full flex items-center justify-center px-1",
-                    active ? "bg-[#18181B] text-white" : "bg-[#f5f5f5] text-[#737373]"
+                    active ? "bg-foreground text-background" : "bg-muted text-muted-foreground"
                   )}
                 >
                   {count}
@@ -164,7 +164,7 @@ export default function Home() {
         }}
       >
         {loading ? (
-          <div className="flex items-center justify-center py-20 text-[#a3a3a3] text-[14px]">
+          <div className="flex items-center justify-center py-20 text-muted-foreground text-[14px]">
             Loading...
           </div>
         ) : (
