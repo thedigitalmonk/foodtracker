@@ -219,7 +219,7 @@ export function AddItemDialog({
       {/* FAB — only for adding new items */}
       <button
         onClick={() => setAddOpen(true)}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-[#18181B] text-white flex items-center justify-center shadow-lg z-50"
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-foreground text-background flex items-center justify-center shadow-lg z-50"
       >
         <Plus size={24} />
       </button>
@@ -240,15 +240,15 @@ export function AddItemDialog({
             />
 
             {/* Drag handle */}
-            <div className="w-9 h-1 bg-[#d1d5db] rounded-full mx-auto -mt-1 mb-1" />
+            <div className="w-9 h-1 bg-border rounded-full mx-auto -mt-1 mb-1" />
 
-            <DialogTitle className="text-[18px] font-semibold text-[#0a0a0a] tracking-normal">
+            <DialogTitle className="text-[18px] font-semibold text-foreground tracking-normal">
               {isEditing ? "Edit Item" : "Add Item"}
             </DialogTitle>
 
             {/* Name */}
             <div className="flex flex-col gap-1.5">
-              <Label className="text-[14px] font-medium text-[#0a0a0a]">Name</Label>
+              <Label className="text-[14px] font-medium text-foreground">Name</Label>
               <div className="relative">
                 <Input
                   ref={nameRef}
@@ -260,14 +260,14 @@ export function AddItemDialog({
                   }}
                   placeholder="e.g. Milk"
                   required
-                  className="text-[16px] rounded-lg border-[#e5e5e5] bg-white h-11 px-3 pr-[4.5rem]"
+                  className="text-[16px] rounded-lg border-input bg-background h-11 px-3 pr-[4.5rem]"
                 />
                 <div className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center">
                   <button
                     type="button"
                     onClick={() => cameraInputRef.current?.click()}
                     disabled={recognizing}
-                    className="text-[#a3a3a3] p-1.5"
+                    className="text-muted-foreground p-1.5"
                     aria-label="Identify with camera"
                   >
                     {recognizing
@@ -278,7 +278,7 @@ export function AddItemDialog({
                   <button
                     type="button"
                     onClick={() => setScannerOpen(true)}
-                    className="text-[#a3a3a3] p-1.5"
+                    className="text-muted-foreground p-1.5"
                     aria-label="Scan barcode"
                   >
                     <ScanLine size={17} />
@@ -291,25 +291,25 @@ export function AddItemDialog({
                 </p>
               )}
               {recognitionMsg && (
-                <p className="text-[12px] text-[#737373]">{recognitionMsg}</p>
+                <p className="text-[12px] text-muted-foreground">{recognitionMsg}</p>
               )}
             </div>
 
             {/* Quantity */}
             <div className="flex flex-col gap-1.5">
-              <Label className="text-[14px] font-medium text-[#0a0a0a]">Quantity</Label>
+              <Label className="text-[14px] font-medium text-foreground">Quantity</Label>
               <Input
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 placeholder="1"
-                className="text-[16px] rounded-lg border-[#e5e5e5] bg-white h-11 px-3"
+                className="text-[16px] rounded-lg border-input bg-background h-11 px-3"
               />
             </div>
 
             {/* Zone — segmented control */}
             <div className="flex flex-col gap-1.5">
-              <Label className="text-[14px] font-medium text-[#0a0a0a]">Zone</Label>
-              <div className="flex bg-[#f5f5f5] rounded-xl p-1 gap-1">
+              <Label className="text-[14px] font-medium text-foreground">Zone</Label>
+              <div className="flex bg-muted rounded-xl p-1 gap-1">
                 {ZONES.map((z) => (
                   <button
                     key={z}
@@ -318,8 +318,8 @@ export function AddItemDialog({
                     className={cn(
                       "flex-1 h-9 rounded-lg text-[13px] font-medium transition-all",
                       zone === z
-                        ? "bg-white text-[#18181B] shadow-sm"
-                        : "text-[#737373]"
+                        ? "bg-card text-foreground shadow-sm"
+                        : "text-muted-foreground"
                     )}
                   >
                     {z}
@@ -330,8 +330,8 @@ export function AddItemDialog({
 
             {/* Expiry date */}
             <div className="flex flex-col gap-1.5">
-              <Label className="text-[14px] font-medium text-[#0a0a0a]">
-                Expiry Date <span className="text-[#a3a3a3] font-normal">(optional)</span>
+              <Label className="text-[14px] font-medium text-foreground">
+                Expiry Date <span className="text-muted-foreground font-normal">(optional)</span>
               </Label>
               <div className="relative">
                 <Input
@@ -341,7 +341,7 @@ export function AddItemDialog({
                     setExpiryDate(e.target.value);
                     setManualExpiry(true);
                   }}
-                  className="text-[16px] rounded-lg border-[#e5e5e5] bg-white h-11 px-3 appearance-none [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:hidden"
+                  className="text-[16px] rounded-lg border-input bg-background h-11 px-3 appearance-none [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:hidden"
                 />
                 {expiryDate && (
                   <button
@@ -351,14 +351,14 @@ export function AddItemDialog({
                       setExpiryDate("");
                       setManualExpiry(false);
                     }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a3a3a3] p-1"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground p-1"
                   >
                     <X size={15} />
                   </button>
                 )}
               </div>
               {suggestion && !manualExpiry && (
-                <p className="text-[12px] text-[#737373]">
+                <p className="text-[12px] text-muted-foreground">
                   Suggested: {suggestion.days} days ({suggestion.keyword})
                 </p>
               )}
@@ -368,7 +368,7 @@ export function AddItemDialog({
             <button
               type="submit"
               disabled={submitting || !name.trim()}
-              className="flex items-center justify-center gap-2 w-full h-[50px] bg-[#171717] text-white rounded-lg text-[14px] font-medium disabled:opacity-50 mt-1"
+              className="flex items-center justify-center gap-2 w-full h-[50px] bg-foreground text-background rounded-lg text-[14px] font-medium disabled:opacity-50 mt-1"
             >
               {isEditing ? <Check size={18} /> : <Plus size={18} />}
               {submitting
