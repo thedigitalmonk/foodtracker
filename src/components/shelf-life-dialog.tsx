@@ -63,7 +63,7 @@ export function ShelfLifeDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
-          <Settings size={18} className="text-[#18181B]" />
+          <Settings size={18} className="text-foreground" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
