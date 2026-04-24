@@ -5,7 +5,7 @@ import { Plus, Check, X, ScanLine, Camera, Loader2 } from "lucide-react";
 import { Item } from "@/lib/types";
 import {
   Dialog,
-  DialogContent,
+  BottomSheetContent,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -225,7 +225,7 @@ export function AddItemDialog({
       </button>
 
       <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
-        <DialogContent className="fixed inset-x-0 bottom-0 top-auto left-0 right-0 translate-x-0 translate-y-0 rounded-t-[20px] rounded-b-none max-w-none w-full border-0 p-0 gap-0 sm:max-w-none">
+        <BottomSheetContent className="rounded-t-[20px]">
           <form onSubmit={handleSubmit} className="flex flex-col gap-5 px-6 pt-6 pb-10">
             {/* Hidden file input for camera/image recognition */}
             <input
@@ -376,7 +376,7 @@ export function AddItemDialog({
                 : isEditing ? "Save Changes" : "Add Item"}
             </button>
           </form>
-        </DialogContent>
+        </BottomSheetContent>
       </Dialog>
     </>
   );
