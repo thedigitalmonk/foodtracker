@@ -4,6 +4,8 @@ import { useState, useCallback, useRef } from "react";
 import { Refrigerator, Snowflake, Package } from "lucide-react";
 import { useItems } from "@/hooks/use-items";
 import { useShelfLife } from "@/hooks/use-shelf-life";
+import { useCategories } from "@/hooks/use-categories";
+import { useCategoryAssignments } from "@/hooks/use-category-assignments";
 import { ItemList } from "@/components/item-list";
 import { AddItemDialog } from "@/components/add-item-dialog";
 import { ShelfLifeDialog } from "@/components/shelf-life-dialog";
@@ -38,8 +40,11 @@ export default function Home() {
     addEntry,
     deleteEntry,
   } = useShelfLife();
+  const { categories, renameCategory } = useCategories();
+  const { assignments, assignCategory } = useCategoryAssignments();
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [activeZone, setActiveZone] = useState<Zone>("Fridge");
+  const [categoryView, setCategoryView] = useState(false);
 
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
   const pendingRef = useRef<PendingDelete | null>(null);
@@ -174,6 +179,11 @@ export default function Home() {
             onDelete={handleUsed}
             onDecrement={handleDecrement}
             onEdit={setEditingItem}
+            categoryView={categoryView}
+            categories={categories}
+            assignments={assignments}
+            onAssign={assignCategory}
+            onRename={renameCategory}
           />
         )}
       </div>
