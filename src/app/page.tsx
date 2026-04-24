@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
-import { Refrigerator, Snowflake, Package } from "lucide-react";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { Refrigerator, Snowflake, Package, Layers } from "lucide-react";
 import { useItems } from "@/hooks/use-items";
 import { useShelfLife } from "@/hooks/use-shelf-life";
+import { useCategories } from "@/hooks/use-categories";
+import { useCategoryAssignments } from "@/hooks/use-category-assignments";
 import { ItemList } from "@/components/item-list";
 import { AddItemDialog } from "@/components/add-item-dialog";
 import { ShelfLifeDialog } from "@/components/shelf-life-dialog";
@@ -38,8 +40,11 @@ export default function Home() {
     addEntry,
     deleteEntry,
   } = useShelfLife();
+  const { categories, renameCategory } = useCategories();
+  const { assignments, assignCategory, inferAndAssign } = useCategoryAssignments();
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [activeZone, setActiveZone] = useState<Zone>("Fridge");
+  const [categoryView, setCategoryView] = useState(false);
 
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
   const pendingRef = useRef<PendingDelete | null>(null);
@@ -94,17 +99,56 @@ export default function Home() {
     ? items.filter((i) => i.id !== pendingDelete.id)
     : items;
 
+  const inferringRef = useRef(false);
+  const prevItemIdsRef = useRef<Set<string>>(new Set(items.map((i) => i.id)));
+
+  const handleToggleCategories = useCallback(async () => {
+    if (inferringRef.current) return;
+    const next = !categoryView;
+    setCategoryView(next);
+    if (next) {
+      inferringRef.current = true;
+      await inferAndAssign(displayedItems, shelfLifeEntries, categories);
+      inferringRef.current = false;
+    }
+  }, [categoryView, displayedItems, shelfLifeEntries, categories, inferAndAssign]);
+
+  useEffect(() => {
+    if (!categoryView || categories.length === 0) return;
+    const currentIds = new Set(items.map((i) => i.id));
+    const hasNew = items.some((i) => !prevItemIdsRef.current.has(i.id));
+    prevItemIdsRef.current = currentIds;
+    if (hasNew) {
+      inferAndAssign(items, shelfLifeEntries, categories);
+    }
+  }, [items, categoryView, categories, shelfLifeEntries, inferAndAssign]);
+
   return (
     <main className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between px-5 h-14 bg-card border-b border-border sticky top-0 z-20">
         <h1 className="text-[20px] font-semibold text-foreground">ST Store</h1>
-        <ShelfLifeDialog
-          entries={shelfLifeEntries}
-          onUpdateDays={updateDays}
-          onAdd={addEntry}
-          onDelete={deleteEntry}
-        />
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleToggleCategories}
+            className={cn(
+              "flex items-center justify-center w-9 h-9 rounded-lg transition-colors",
+              categoryView
+                ? "bg-foreground text-background"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+            )}
+            aria-label={categoryView ? "Exit category view" : "Group by category"}
+          >
+            <Layers size={18} />
+          </button>
+          <ShelfLifeDialog
+            entries={shelfLifeEntries}
+            onUpdateDays={updateDays}
+            onAdd={addEntry}
+            onDelete={deleteEntry}
+          />
+        </div>
       </header>
 
       {/* Tab bar */}
@@ -174,6 +218,11 @@ export default function Home() {
             onDelete={handleUsed}
             onDecrement={handleDecrement}
             onEdit={setEditingItem}
+            categoryView={categoryView}
+            categories={categories}
+            assignments={assignments}
+            onAssign={assignCategory}
+            onRename={renameCategory}
           />
         )}
       </div>
