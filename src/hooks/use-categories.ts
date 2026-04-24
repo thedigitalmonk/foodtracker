@@ -4,6 +4,10 @@ import { useState, useEffect, useCallback } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { Category } from "@/lib/types";
 
+function sortCategories(list: Category[]) {
+  return [...list].sort((a, b) => a.name.localeCompare(b.name));
+}
+
 export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -15,9 +19,10 @@ export function useCategories() {
       .order("name");
     if (error) {
       console.error("Error fetching categories:", error);
+      setLoading(false);
       return;
     }
-    setCategories(data ?? []);
+    setCategories(sortCategories(data ?? []));
     setLoading(false);
   }, []);
 
@@ -28,7 +33,7 @@ export function useCategories() {
   const renameCategory = useCallback(async (id: string, name: string) => {
     // Optimistic update
     setCategories((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, name } : c))
+      sortCategories(prev.map((c) => (c.id === id ? { ...c, name } : c)))
     );
     const { error } = await getSupabase()
       .from("categories")
@@ -40,5 +45,28 @@ export function useCategories() {
     }
   }, [fetchCategories]);
 
-  return { categories, loading, renameCategory };
+  const createCategory = useCallback(async (name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return null;
+
+    const { data, error } = await getSupabase()
+      .from("categories")
+      .insert({
+        name: trimmed,
+        source_name: `custom:${crypto.randomUUID()}`,
+      })
+      .select("*")
+      .single();
+
+    if (error) {
+      console.error("Error creating category:", error);
+      await fetchCategories();
+      return null;
+    }
+
+    setCategories((prev) => sortCategories([...prev, data]));
+    return data as Category;
+  }, [fetchCategories]);
+
+  return { categories, loading, renameCategory, createCategory };
 }

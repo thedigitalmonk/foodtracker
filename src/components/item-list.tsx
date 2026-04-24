@@ -16,6 +16,7 @@ interface ItemListProps {
   assignments: Assignment[];
   onAssign: (itemId: string, categoryId: string) => void;
   onRename: (categoryId: string, name: string) => void;
+  onCreateCategory: (name: string) => Promise<Category | null>;
 }
 
 export function ItemList({
@@ -29,6 +30,7 @@ export function ItemList({
   assignments,
   onAssign,
   onRename,
+  onCreateCategory,
 }: ItemListProps) {
   const zoneItems = items.filter((item) => item.zone === activeZone);
 
@@ -43,6 +45,7 @@ export function ItemList({
         onEdit={onEdit}
         onAssign={onAssign}
         onRename={onRename}
+        onCreateCategory={onCreateCategory}
       />
     );
   }

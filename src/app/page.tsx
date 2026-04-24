@@ -40,7 +40,7 @@ export default function Home() {
     addEntry,
     deleteEntry,
   } = useShelfLife();
-  const { categories, renameCategory } = useCategories();
+  const { categories, renameCategory, createCategory } = useCategories();
   const { assignments, assignCategory, inferAndAssign } = useCategoryAssignments();
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [activeZone, setActiveZone] = useState<Zone>("Fridge");
@@ -223,6 +223,7 @@ export default function Home() {
             assignments={assignments}
             onAssign={assignCategory}
             onRename={renameCategory}
+            onCreateCategory={createCategory}
           />
         )}
       </div>

@@ -15,6 +15,7 @@ interface CategorySectionProps {
   onEdit: (item: Item) => void;
   onAssign: (itemId: string, categoryId: string) => void;
   onRename: (categoryId: string, name: string) => void;
+  onCreateCategory: (name: string) => Promise<Category | null>;
 }
 
 const LONG_PRESS_MS = 500;
@@ -28,6 +29,7 @@ export function CategorySection({
   onEdit,
   onAssign,
   onRename,
+  onCreateCategory,
 }: CategorySectionProps) {
   // expanded[id] = false means collapsed; undefined or true means expanded
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -176,6 +178,14 @@ export function CategorySection({
         onMove={(categoryId) => {
           if (moveItem) onAssign(moveItem.id, categoryId);
           setMoveItem(null);
+        }}
+        onCreateCategory={async (name) => {
+          const category = await onCreateCategory(name);
+          if (moveItem && category) {
+            onAssign(moveItem.id, category.id);
+            setMoveItem(null);
+          }
+          return category;
         }}
       />
     </>
