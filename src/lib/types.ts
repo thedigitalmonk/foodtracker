@@ -4,6 +4,7 @@ export interface Item {
   quantity: string;
   zone: "Fridge" | "Freezer" | "Pantry";
   expiry_date: string | null;
+  is_container: boolean;
   created_at: string;
 }
 

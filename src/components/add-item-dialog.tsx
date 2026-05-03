@@ -49,6 +49,7 @@ export function AddItemDialog({
   const [quantity, setQuantity] = useState("1");
   const [zone, setZone] = useState<"Fridge" | "Freezer" | "Pantry">(defaultZone ?? "Fridge");
   const [expiryDate, setExpiryDate] = useState("");
+  const [isContainer, setIsContainer] = useState(false);
   const [suggestion, setSuggestion] = useState<{
     days: number;
     keyword: string;
@@ -71,6 +72,7 @@ export function AddItemDialog({
       setQuantity(editItem.quantity);
       setZone(editItem.zone);
       setExpiryDate(editItem.expiry_date ?? "");
+      setIsContainer(editItem.is_container);
       setSuggestion(null);
       setManualExpiry(true);
       setTimeout(() => nameRef.current?.focus(), 150);
@@ -106,6 +108,7 @@ export function AddItemDialog({
     setQuantity("1");
     setZone(defaultZone ?? "Fridge");
     setExpiryDate("");
+    setIsContainer(false);
     setSuggestion(null);
     setManualExpiry(false);
     setSubmitting(false);
@@ -129,6 +132,7 @@ export function AddItemDialog({
       quantity: quantity.trim() || "1",
       zone,
       expiry_date: expiryDate || null,
+      is_container: isContainer,
     };
 
     const success = isEditing
@@ -315,6 +319,24 @@ export function AddItemDialog({
                 ))}
               </div>
             </div>
+
+            {/* Container toggle */}
+            <button
+              type="button"
+              onClick={() => setIsContainer((v) => !v)}
+              className="flex items-center justify-between w-full"
+            >
+              <span className="text-[14px] font-medium text-foreground">Container</span>
+              <div className={cn(
+                "w-11 h-6 rounded-full transition-colors relative flex-shrink-0 border-2 border-transparent",
+                isContainer ? "bg-foreground" : "bg-zinc-300 dark:bg-zinc-600"
+              )}>
+                <div className={cn(
+                  "absolute top-0.5 w-4 h-4 rounded-full shadow transition-all",
+                  isContainer ? "left-[22px] bg-background" : "left-0.5 bg-white"
+                )} />
+              </div>
+            </button>
 
             {/* Expiry date */}
             <div className="flex flex-col gap-1.5">

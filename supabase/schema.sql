@@ -1,11 +1,12 @@
 -- Items table
 create table if not exists items (
-  id          uuid primary key default gen_random_uuid(),
-  name        text not null,
-  quantity    text not null,
-  zone        text not null check (zone in ('Fridge', 'Freezer', 'Pantry')),
-  expiry_date date,
-  created_at  timestamptz not null default now()
+  id           uuid primary key default gen_random_uuid(),
+  name         text not null,
+  quantity     text not null,
+  zone         text not null check (zone in ('Fridge', 'Freezer', 'Pantry')),
+  expiry_date  date,
+  is_container boolean not null default false,
+  created_at   timestamptz not null default now()
 );
 
 create index if not exists idx_items_zone_expiry on items (zone, expiry_date asc nulls last);
