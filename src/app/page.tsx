@@ -140,6 +140,7 @@ export default function Home() {
         quantity: String(qty - 1),
         zone: item.zone,
         expiry_date: item.expiry_date,
+        is_container: item.is_container,
       });
     },
     [items, updateItem]
