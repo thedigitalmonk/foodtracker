@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
-import { ChevronLeft, Refrigerator, Snowflake, Package, Layers, Settings } from "lucide-react";
+import { ChevronLeft, Layers } from "lucide-react";
 import { useItems } from "@/hooks/use-items";
 import { useShelfLife } from "@/hooks/use-shelf-life";
 import { useCategories } from "@/hooks/use-categories";
