@@ -180,17 +180,15 @@ export function SuggestTile({ items, onOpen }: { items: Item[]; onOpen: () => vo
   const canShare = typeof navigator !== "undefined" && "share" in navigator;
 
   const handleShare = async () => {
+    const text = low.map((i) => i.name).join("\n");
     try {
       if (canShare) {
-        const nav = navigator as Navigator & { share: (d: ShareData) => Promise<void> };
-        for (const item of low) {
-          await nav.share({ title: item.name, text: item.name });
-        }
+        await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share({ text });
       } else {
-        await navigator.clipboard.writeText(low.map((i) => i.name).join("\n"));
+        await navigator.clipboard.writeText(text);
       }
     } catch {
-      // User cancelled — stop sharing remaining items
+      // User cancelled
     }
     onOpen();
   };
