@@ -1,6 +1,7 @@
 "use client";
 
-import { AlertTriangle, Plus, ChevronRight, Refrigerator, Snowflake, Package, ShoppingBasket, Sparkles, ScanLine } from "lucide-react";
+import { useState } from "react";
+import { AlertTriangle, Plus, ChevronRight, Refrigerator, Snowflake, Package, ShoppingBasket, Sparkles, ScanLine, Check, Bell } from "lucide-react";
 import { Item } from "@/lib/types";
 import { getExpiryStatus, getDaysUntil, formatRelativeExpiry, cn } from "@/lib/utils";
 
@@ -177,54 +178,117 @@ export function SuggestTile({ items, onOpen }: { items: Item[]; onOpen: () => vo
     .filter((i) => parseInt(i.quantity, 10) <= 1 && !i.is_container && i.zone !== "Freezer")
     .slice(0, 6);
 
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [added, setAdded] = useState<Set<string>>(new Set());
+
   const canShare = typeof navigator !== "undefined" && "share" in navigator;
 
-  const handleShare = async () => {
-    const text = low.map((i) => i.name).join("\n");
+  const handleShareItem = async (item: Item) => {
     try {
-      if (canShare) {
-        await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share({ text });
-      } else {
-        await navigator.clipboard.writeText(text);
-      }
+      await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share({
+        title: item.name,
+        text: item.name,
+      });
+      setAdded((prev) => new Set(prev).add(item.id));
     } catch {
       // User cancelled
     }
-    onOpen();
+  };
+
+  const handleClose = () => {
+    setSheetOpen(false);
+    setAdded(new Set());
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleShare}
-      className={cn(tileBase, "col-span-2 min-h-[140px] bg-white border-[#e5e5e5] dark:bg-[#262626] dark:border-[#3f3f46] text-left")}
-    >
-      <div className="flex items-center justify-between mb-2.5">
-        <div className="flex items-center gap-1.5">
-          <Sparkles size={13} className="text-[#18181B] dark:text-white" />
-          <span className="text-[11px] font-semibold uppercase tracking-widest text-[#18181B] dark:text-white">
-            Running low
-          </span>
+    <>
+      <button
+        type="button"
+        onClick={async () => {
+          if (low.length === 0) { onOpen(); return; }
+          if (!canShare) {
+            await navigator.clipboard.writeText(low.map((i) => i.name).join("\n")).catch(() => {});
+            return;
+          }
+          setSheetOpen(true);
+        }}
+        className={cn(tileBase, "col-span-2 min-h-[140px] bg-white border-[#e5e5e5] dark:bg-[#262626] dark:border-[#3f3f46] text-left")}
+      >
+        <div className="flex items-center justify-between mb-2.5">
+          <div className="flex items-center gap-1.5">
+            <Sparkles size={13} className="text-[#18181B] dark:text-white" />
+            <span className="text-[11px] font-semibold uppercase tracking-widest text-[#18181B] dark:text-white">
+              Running low
+            </span>
+          </div>
+          <ChevronRight size={16} className="text-[#a3a3a3]" />
         </div>
-        <ChevronRight size={16} className="text-[#a3a3a3]" />
-      </div>
-      <div className="flex flex-wrap gap-1.5 mt-1.5">
-        {low.map((it) => (
-          <span
-            key={it.id}
-            className="text-[12px] font-medium px-2.5 py-1.5 bg-[#f5f5f5] dark:bg-[#333] rounded-full text-[#18181B] dark:text-white"
-          >
-            {it.name}
-          </span>
-        ))}
-        {low.length === 0 && (
-          <span className="text-[13px] text-[#a3a3a3]">All stocked up</span>
-        )}
-      </div>
-      <div className="text-[12px] text-[#737373] dark:text-neutral-400 mt-auto pt-2.5">
-        {canShare ? "Tap to share shopping list" : "Tap to copy to clipboard"}
-      </div>
-    </button>
+        <div className="flex flex-wrap gap-1.5 mt-1.5">
+          {low.map((it) => (
+            <span
+              key={it.id}
+              className="text-[12px] font-medium px-2.5 py-1.5 bg-[#f5f5f5] dark:bg-[#333] rounded-full text-[#18181B] dark:text-white"
+            >
+              {it.name}
+            </span>
+          ))}
+          {low.length === 0 && (
+            <span className="text-[13px] text-[#a3a3a3]">All stocked up</span>
+          )}
+        </div>
+        <div className="text-[12px] text-[#737373] dark:text-neutral-400 mt-auto pt-2.5">
+          {low.length > 0 ? (canShare ? "Tap to add to Reminders" : "Tap to copy") : "You're all stocked up"}
+        </div>
+      </button>
+
+      {sheetOpen && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-40" onPointerDown={handleClose} />
+          <div className="fixed bottom-0 left-0 right-0 z-50 bg-card rounded-t-2xl">
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+            </div>
+
+            {/* Title */}
+            <p className="text-[13px] text-muted-foreground text-center px-4 pt-1 pb-3">
+              Add to <span className="font-semibold text-foreground">Reminders</span>
+            </p>
+
+            {/* Item list */}
+            <div className="divide-y divide-border">
+              {low.map((item) => {
+                const isAdded = added.has(item.id);
+                return (
+                  <div key={item.id} className="flex items-center justify-between px-5 py-3.5">
+                    <span className={cn("text-[15px]", isAdded ? "text-muted-foreground line-through" : "text-foreground")}>
+                      {item.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleShareItem(item)}
+                      disabled={isAdded}
+                      className={cn(
+                        "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors",
+                        isAdded
+                          ? "bg-muted text-muted-foreground"
+                          : "bg-foreground text-background"
+                      )}
+                    >
+                      {isAdded ? <Check size={13} /> : <Bell size={13} />}
+                      {isAdded ? "Added" : "Add"}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Safe area spacer */}
+            <div className="h-8" />
+          </div>
+        </>
+      )}
+    </>
   );
 }
 
