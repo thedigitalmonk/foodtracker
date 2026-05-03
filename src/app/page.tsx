@@ -99,7 +99,7 @@ export default function Home() {
   const lowItems = useMemo(
     () =>
       displayedItems.filter(
-        (i) => parseInt(i.quantity, 10) === 1 && i.zone !== "Freezer"
+        (i) => parseInt(i.quantity, 10) <= 1 && !i.is_container && i.zone !== "Freezer"
       ),
     [displayedItems]
   );

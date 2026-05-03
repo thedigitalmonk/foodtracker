@@ -174,22 +174,23 @@ export function InventoryTile({ items, onOpen }: { items: Item[]; onOpen: () => 
 // ---------- Running low (col-span-2) ----------
 export function SuggestTile({ items, onOpen }: { items: Item[]; onOpen: () => void }) {
   const low = items
-    .filter((i) => parseInt(i.quantity, 10) === 1 && i.zone !== "Freezer")
+    .filter((i) => parseInt(i.quantity, 10) <= 1 && !i.is_container && i.zone !== "Freezer")
     .slice(0, 6);
 
   const canShare = typeof navigator !== "undefined" && "share" in navigator;
 
   const handleShare = async () => {
-    const list = low.map((i) => `• ${i.name}`).join("\n");
-    const text = `Running low:\n${list}`;
     try {
       if (canShare) {
-        await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share({ title: "Running low", text });
+        const nav = navigator as Navigator & { share: (d: ShareData) => Promise<void> };
+        for (const item of low) {
+          await nav.share({ title: item.name, text: item.name });
+        }
       } else {
-        await navigator.clipboard.writeText(text);
+        await navigator.clipboard.writeText(low.map((i) => i.name).join("\n"));
       }
     } catch {
-      // User cancelled
+      // User cancelled — stop sharing remaining items
     }
     onOpen();
   };
