@@ -73,22 +73,22 @@ export function ExpiringTile({ items, onOpen }: { items: Item[]; onOpen: () => v
   );
 }
 
-// ---------- Quick add (col-span-1, dark) ----------
+// ---------- Quick add (col-span-1) ----------
 export function QuickAddTile({ onAdd }: { onAdd: () => void }) {
   return (
     <button
       type="button"
       onClick={onAdd}
-      className={cn(tileBase, "col-span-1 min-h-[174px] bg-[#18181B] border-[#18181B] dark:bg-white dark:border-white justify-between text-left")}
+      className={cn(tileBase, "col-span-1 min-h-[174px] bg-[#fafafa] dark:bg-[#1f1f1f] border-[#e5e5e5] dark:border-[#262626] justify-between text-left")}
     >
-      <div className="h-9 w-9 rounded-full bg-white/[0.12] dark:bg-black/[0.12] flex items-center justify-center text-white dark:text-black">
+      <div className="h-9 w-9 rounded-full bg-white dark:bg-[#171717] border border-[#e5e5e5] dark:border-[#262626] flex items-center justify-center text-[#18181B] dark:text-white">
         <Plus size={20} />
       </div>
       <div>
-        <div className="text-[16px] font-semibold leading-snug tracking-tight text-white dark:text-black mb-1">
+        <div className="text-[16px] font-semibold leading-snug tracking-tight text-[#18181B] dark:text-white mb-1">
           Add item
         </div>
-        <div className="text-[12px] text-white/55 dark:text-black/55">
+        <div className="text-[12px] text-[#737373] dark:text-neutral-400">
           Photo, barcode, or type
         </div>
       </div>

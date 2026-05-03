@@ -393,8 +393,8 @@ export default function Home() {
                   className={cn(
                     "flex-1 py-2 text-[12px] font-medium rounded-full border transition-colors",
                     z === activeZone
-                      ? "bg-[#18181B] text-white border-[#18181B] dark:bg-white dark:text-black dark:border-white"
-                      : "bg-white text-[#737373] border-[#e5e5e5] dark:bg-[#262626] dark:text-[#737373] dark:border-[#3f3f46]"
+                      ? "bg-white dark:bg-[#171717] text-[#18181B] dark:text-white border-[#18181B] dark:border-[#fafafa]"
+                      : "bg-white dark:bg-[#171717] text-[#737373] border-[#e5e5e5] dark:border-[#262626]"
                   )}
                 >
                   {z}

@@ -35,21 +35,16 @@ export function ZoneStrip({ items, activeZone, onZoneSelect }: ZoneStripProps) {
             type="button"
             onClick={() => onZoneSelect(key)}
             className={cn(
-              "flex flex-col gap-2 p-2.5 rounded-xl border text-left transition-colors",
+              "flex flex-col gap-2 p-2.5 rounded-xl border text-left transition-[border-color]",
               isActive
-                ? "bg-[#18181B] border-[#18181B] dark:bg-white dark:border-white"
-                : "bg-white border-[#e5e5e5] dark:bg-[#262626] dark:border-[#3f3f46]"
+                ? "bg-white dark:bg-[#171717] border-[#18181B] dark:border-[#fafafa]"
+                : "bg-white dark:bg-[#171717] border-[#e5e5e5] dark:border-[#262626]"
             )}
           >
             <div className="flex items-center justify-between">
               <div
-                className={cn(
-                  "h-[22px] w-[22px] rounded-[7px] flex items-center justify-center",
-                  isActive
-                    ? "bg-white/[0.12] dark:bg-black/[0.10] text-white dark:text-black"
-                    : "bg-[#f5f5f5] dark:bg-[#3a3a3a]"
-                )}
-                style={isActive ? undefined : { color: accent }}
+                className="h-[22px] w-[22px] rounded-[7px] flex items-center justify-center bg-[#f5f5f5] dark:bg-[#262626]"
+                style={{ color: accent }}
               >
                 <Icon size={12} />
               </div>
@@ -58,24 +53,10 @@ export function ZoneStrip({ items, activeZone, onZoneSelect }: ZoneStripProps) {
               )}
             </div>
             <div>
-              <div
-                className={cn(
-                  "text-[12px] font-medium leading-none mb-[3px]",
-                  isActive
-                    ? "text-white/60 dark:text-black/60"
-                    : "text-[#737373] dark:text-neutral-400"
-                )}
-              >
+              <div className="text-[12px] font-medium leading-none mb-[3px] text-[#737373] dark:text-neutral-400">
                 {key}
               </div>
-              <div
-                className={cn(
-                  "text-[17px] font-semibold leading-none tracking-tight",
-                  isActive
-                    ? "text-white dark:text-black"
-                    : "text-[#18181B] dark:text-white"
-                )}
-              >
+              <div className="text-[17px] font-semibold leading-none tracking-tight text-[#18181B] dark:text-white">
                 {zoneItems.length}
               </div>
             </div>
