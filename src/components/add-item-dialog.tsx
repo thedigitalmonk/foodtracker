@@ -31,6 +31,8 @@ interface AddItemDialogProps {
   editItem?: Item | null;
   onEditClose?: () => void;
   defaultZone?: "Fridge" | "Freezer" | "Pantry";
+  open: boolean;
+  onClose: () => void;
 }
 
 export function AddItemDialog({
@@ -40,8 +42,9 @@ export function AddItemDialog({
   editItem,
   onEditClose,
   defaultZone,
+  open,
+  onClose,
 }: AddItemDialogProps) {
-  const [addOpen, setAddOpen] = useState(false);
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("1");
   const [zone, setZone] = useState<"Fridge" | "Freezer" | "Pantry">(defaultZone ?? "Fridge");
@@ -60,7 +63,6 @@ export function AddItemDialog({
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const isEditing = !!editItem;
-  const open = isEditing || addOpen;
 
   // Populate form when editItem is set
   useEffect(() => {
@@ -77,11 +79,11 @@ export function AddItemDialog({
 
   // Auto-focus and zone pre-selection on add open
   useEffect(() => {
-    if (addOpen && !isEditing) {
+    if (open && !isEditing) {
       setZone(defaultZone ?? "Fridge");
       setTimeout(() => nameRef.current?.focus(), 150);
     }
-  }, [addOpen, isEditing, defaultZone]);
+  }, [open, isEditing, defaultZone]);
 
   // Suggest expiry when typing name (add mode only)
   useEffect(() => {
@@ -113,11 +115,8 @@ export function AddItemDialog({
 
   const handleClose = () => {
     reset();
-    if (isEditing) {
-      onEditClose?.();
-    } else {
-      setAddOpen(false);
-    }
+    onEditClose?.();
+    onClose();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -138,11 +137,8 @@ export function AddItemDialog({
 
     if (success) {
       reset();
-      if (isEditing) {
-        onEditClose?.();
-      } else {
-        setAddOpen(false);
-      }
+      onEditClose?.();
+      onClose();
     }
     setSubmitting(false);
   };
@@ -215,14 +211,6 @@ export function AddItemDialog({
           onClose={() => setScannerOpen(false)}
         />
       )}
-
-      {/* FAB — only for adding new items */}
-      <button
-        onClick={() => setAddOpen(true)}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-foreground text-background flex items-center justify-center shadow-lg z-50"
-      >
-        <Plus size={24} />
-      </button>
 
       <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
         <BottomSheetContent className="rounded-t-[20px]">

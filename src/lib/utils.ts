@@ -34,3 +34,21 @@ export function addDaysToToday(days: number): string {
   date.setDate(date.getDate() + days);
   return date.toISOString().split("T")[0];
 }
+
+export function getDaysUntil(expiryDate: string | null): number | null {
+  if (!expiryDate) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const expiry = new Date(expiryDate + "T00:00:00");
+  return Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+export function formatRelativeExpiry(expiryDate: string): string {
+  const days = getDaysUntil(expiryDate);
+  if (days === null) return "";
+  if (days < -1) return `${Math.abs(days)}d ago`;
+  if (days === -1) return "Yesterday";
+  if (days === 0) return "Today";
+  if (days === 1) return "Tomorrow";
+  return `${days}d left`;
+}
