@@ -43,11 +43,13 @@ export function ZoneStrip({ items, activeZone, onZoneSelect }: ZoneStripProps) {
           >
             <div className="flex items-center justify-between">
               <div
-                className="h-[22px] w-[22px] rounded-[7px] flex items-center justify-center"
-                style={{
-                  background: isActive ? "rgba(255,255,255,0.12)" : "#f5f5f5",
-                  color: isActive ? "#fff" : accent,
-                }}
+                className={cn(
+                  "h-[22px] w-[22px] rounded-[7px] flex items-center justify-center",
+                  isActive
+                    ? "bg-white/[0.12] dark:bg-black/[0.10] text-white dark:text-black"
+                    : "bg-[#f5f5f5] dark:bg-[#3a3a3a]"
+                )}
+                style={isActive ? undefined : { color: accent }}
               >
                 <Icon size={12} />
               </div>
@@ -61,7 +63,7 @@ export function ZoneStrip({ items, activeZone, onZoneSelect }: ZoneStripProps) {
                   "text-[12px] font-medium leading-none mb-[3px]",
                   isActive
                     ? "text-white/60 dark:text-black/60"
-                    : "text-[#737373]"
+                    : "text-[#737373] dark:text-neutral-400"
                 )}
               >
                 {key}

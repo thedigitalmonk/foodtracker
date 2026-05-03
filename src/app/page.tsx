@@ -309,7 +309,7 @@ export default function Home() {
           /* ── Bento dashboard ── */
           <>
             <div className="px-4 pt-3 pb-3.5">
-              <div className="text-[12px] text-[#737373] mb-1">
+              <div className="text-[12px] text-[#737373] dark:text-neutral-400 mb-1">
                 {new Date().toLocaleDateString("en-US", {
                   weekday: "long",
                   month: "short",
