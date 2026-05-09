@@ -7,19 +7,20 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Track what's in your fridge, freezer, and pantry",
     start_url: "/",
     display: "standalone",
-    background_color: "#EFF6FF",
-    theme_color: "#EFF6FF",
+    background_color: "#FF4545",
+    theme_color: "#FF4545",
     icons: [
       {
-        src: "/icon-192.png",
-        sizes: "192x192",
+        src: "/apple-icon",
+        sizes: "180x180",
         type: "image/png",
       },
       {
-        src: "/icon-512.png",
-        sizes: "512x512",
+        src: "/api/apple-icon-dark",
+        sizes: "180x180",
         type: "image/png",
-        purpose: "maskable",
+        // @ts-expect-error – media is valid per W3C Web App Manifest spec, not yet in TS types
+        media: "(prefers-color-scheme: dark)",
       },
     ],
   };

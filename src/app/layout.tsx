@@ -14,6 +14,12 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "Fridge Tracker",
   },
+  icons: {
+    apple: [
+      { url: "/apple-icon", sizes: "180x180", media: "(prefers-color-scheme: light)" },
+      { url: "/api/apple-icon-dark", sizes: "180x180", media: "(prefers-color-scheme: dark)" },
+    ],
+  },
 };
 
 export const viewport: Viewport = {
